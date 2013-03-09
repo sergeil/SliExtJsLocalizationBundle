@@ -30,6 +30,11 @@ class ExtjsClassesProvider implements FileProviderInterface
         return isset($matches['className']) ? $matches['className'] : false;
     }
 
+    static public function clazz()
+    {
+        return get_called_class();
+    }
+
     /**
      * {@inheritDoc}
      */

@@ -8,16 +8,24 @@ use Symfony\Component\Translation\MessageCatalogue;
 use Sli\ExtJsLocalizationBundle\FileProvider\ExtjsClassesProvider;
 
 /**
- * @author Sergei Lissovski <sergei.lissovski@modera.net>
- */ 
+ * @author Sergei Lissovski <sergei.lissovski@gmail.com>
+ */
 class ExtjsClassesExtractor implements ExtractorInterface
 {
     private $prefix;
     private $pathProvider;
 
-    public function __construct(FileProviderInterface $pathProvider)
+    public function __construct(FileProviderInterface $pathProvider = null)
     {
-        $this->pathProvider = $pathProvider;
+        $this->pathProvider = null === $pathProvider ? new ExtjsClassesProvider() : $pathProvider;
+    }
+
+    /**
+     * @return \Sli\ExtJsLocalizationBundle\FileProvider\FileProviderInterface
+     */
+    public function getPathProvider()
+    {
+        return $this->pathProvider;
     }
 
     /**
@@ -34,9 +42,8 @@ class ExtjsClassesExtractor implements ExtractorInterface
     public function extract($directory, MessageCatalogue $catalogue)
     {
         foreach ($this->pathProvider->getFiles($directory) as $filename) {
-
             foreach ($this->extractTokens($filename) as $token=>$translation) {
-                $catalogue->set($token, $translation, 'extjs');
+                $catalogue->set($token, $this->prefix.$translation, 'extjs');
             }
         }
     }
@@ -108,7 +115,7 @@ class ExtjsClassesExtractor implements ExtractorInterface
             $token = substr($token, 0, -4); // removing "Text" suffix
             $token = $className.'.'.$token;
 
-            $tokens[$token] = $this->prefix.$value;
+            $tokens[$token] = $value;
         }
 
         return $tokens;
