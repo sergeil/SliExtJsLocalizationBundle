@@ -9,20 +9,25 @@ use Symfony\Component\Finder\Finder;
  */
 class ExtjsClassesProvider implements FileProviderInterface
 {
-    private $regex;
+    static private $regex;
 
-    public function __construct()
+    static public function isValidExtjsClass($sourceCode)
     {
-        $this->regex = implode('', array( // FIXME stupid one
-            '@',
-            'Ext\.define\(',
+        if (!self::$regex) {
+            self::$regex = implode('', array( // FIXME stupid one
+                '@',
+                'Ext\.define\(',
                 '(\'|")+',
-                    '(?P<className>.*)',
+                '(?P<className>.*)',
                 '(\'|")+',
                 '.*',
                 ',',
-            '@'
-        ));
+                '@'
+            ));
+        }
+
+        preg_match(self::$regex, $sourceCode, $matches);
+        return isset($matches['className']) ? $matches['className'] : false;
     }
 
     /**
@@ -34,16 +39,11 @@ class ExtjsClassesProvider implements FileProviderInterface
 
         $finder = new Finder();
         foreach ($finder->files()->name('*.js')->in($directory) as $filepath) {
-            if ($this->isValidExtjsClass(file_get_contents($filepath))) {
+            if (self::isValidExtjsClass(file_get_contents($filepath))) {
                 $paths[] = $filepath;
             }
         }
 
         return $paths;
-    }
-
-    protected function isValidExtjsClass($source)
-    {
-        return preg_match($this->regex, $source);
     }
 }
