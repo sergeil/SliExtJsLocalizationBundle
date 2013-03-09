@@ -22,7 +22,7 @@ class RouterResourcePass implements CompilerPassInterface
 
         $resourcePath = $container->getParameterBag()->resolveValue($container->getParameter('router.resource'));
         $resource = array_merge(Yaml::parse(file_get_contents($resourcePath)), array(
-            'SliExtJsLocalizationBundle' => array(
+            'sli_extjs_route' => array(
                 'pattern' => $container->getParameter('sli_ext_js_localization.route'),
                 'defaults' => array(
                     '_controller' => 'SliExtJsLocalizationBundle:Index:compile'

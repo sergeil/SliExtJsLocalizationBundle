@@ -3,9 +3,8 @@
 namespace Sli\ExtJsLocalizationBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\Translation\MessageCatalogue;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * @author Sergei Lissovski <sergei.lissovski@gmail.com>
@@ -18,7 +17,6 @@ class IndexController extends Controller
     }
 
     /**
-     * @Template
      * @param string $locale
      */
     public function compileAction($locale = null)
@@ -60,11 +58,12 @@ class IndexController extends Controller
             $tokenGroups[$className][$token] = $translator->trans($fullToken, array(), $this->getDomain(), $locale);
         }
 
-        return array(
+        $body = $this->renderView('SliExtJsLocalizationBundle:index:compile.js.twig', array(
             'tokens_total' => count($tokenGroups, true) - count($tokenGroups),
             'locale' => $locale,
             'token_groups' => $tokenGroups,
             'skipped_bundles' => $kernel->getEnvironment() != 'prod' ? $skippedBundles : array()
-        );
+        ));
+        return new Response($body, 200, array('Content-Type' => 'application/javascript'));
     }
 }
