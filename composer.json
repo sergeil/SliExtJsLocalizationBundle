@@ -1,0 +1,25 @@
+
+{
+    "name": "sergeil/extjslocalization-bundle",
+    "description": "Adds localization support for ExtJs classes to Symfony2",
+    "keywords": ["extjs", "l10n", "translation"],
+    "homepage": "https://github.com/sergeil/SliExtJsLocalizationBundle",
+    "type": "symfony-bundle",
+    "license": "MIT",
+    "minimum-stability": "dev",
+    "authors": [
+        {
+            "name": "Sergei Lissovski",
+            "email": "sergei.lissovski@gmail.com",
+            "homepage": "http://sergei.lissovski.org/"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.0",
+        "symfony/framework-bundle": ">=2.1.0,<2.3-dev"
+    },
+    "autoload": {
+        "psr-0": { "Sli\\ExtJsLocalizationBundle": "" }
+    },
+    "target-dir": "Sli/ExtJsLocalizationBundle"
+}
