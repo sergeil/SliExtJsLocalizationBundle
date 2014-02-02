@@ -56,15 +56,16 @@ class IndexController extends Controller
                 $tokenGroups[$className] = array();
             }
             
-            $tokenGroups[$className][$token] = $catalogue->get($fullToken, $this->getDomain());
+            $tokenGroups[$className][$token] = $translator->trans($fullToken, array(), $this->getDomain(), $locale);
         }
 
-        $body = $this->renderView('SliExtJsLocalizationBundle:Index:compile.js.twig', array(
+        $body = $this->renderView('SliExtJsLocalizationBundle:Index:compile.html.twig', array(
             'tokens_total' => count($tokenGroups, true) - count($tokenGroups),
             'locale' => $locale,
             'token_groups' => $tokenGroups,
             'skipped_bundles' => $kernel->getEnvironment() != 'prod' ? $skippedBundles : array()
         ));
-        return new Response($body, 200, array('Content-Type' => 'application/javascript'));
+
+        return new Response($body, 200, array('Content-Type' => 'application/javascript; charset=UTF-8'));
     }
 }
