@@ -55,10 +55,11 @@ class IndexController extends Controller
             if (!isset($tokenGroups[$className])) {
                 $tokenGroups[$className] = array();
             }
-            $tokenGroups[$className][$token] = $translator->trans($fullToken, array(), $this->getDomain(), $locale);
+            
+            $tokenGroups[$className][$token] = $catalogue->get($fullToken, $this->getDomain());
         }
 
-        $body = $this->renderView('SliExtJsLocalizationBundle:index:compile.js.twig', array(
+        $body = $this->renderView('SliExtJsLocalizationBundle:Index:compile.js.twig', array(
             'tokens_total' => count($tokenGroups, true) - count($tokenGroups),
             'locale' => $locale,
             'token_groups' => $tokenGroups,
