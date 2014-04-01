@@ -4,6 +4,7 @@ namespace Sli\ExtJsLocalizationBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Translation\MessageCatalogue;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -16,14 +17,19 @@ class IndexController extends Controller
         return 'extjs';
     }
 
+    protected function getTemplate()
+    {
+        return 'SliExtJsLocalizationBundle:Index:compile.html.twig';
+    }
+
     /**
+     * @param Request $request
      * @param string $locale
+     * @return Response
      */
-    public function compileAction($locale = null)
+    public function compileAction(Request $request, $locale = null)
     {
         if (!$locale) {
-            /* @var \Symfony\Component\HttpFoundation\Request $request */
-            $request = $this->getRequest();
             $locale = $request->getLocale();
         }
 
@@ -37,11 +43,21 @@ class IndexController extends Controller
         $catalogue = new MessageCatalogue($locale);
 
         $skippedBundles = array();
+        /* @var \Symfony\Component\HttpKernel\Bundle\Bundle $bundle */
         foreach ($kernel->getBundles() as $bundle) {
             try {
-                /* @var \Symfony\Component\HttpKernel\Bundle\Bundle $bundle */
-                $loader->loadMessages($bundle->getPath().'/Resources/translations', $catalogue);
+                $loader->loadMessages($bundle->getPath() . '/Resources/translations', $catalogue);
+                $skippedBundle = false;
             } catch (\InvalidArgumentException $e) {
+                $skippedBundle = true;
+            }
+
+            try {
+                $loader->loadMessages($kernel->getRootdir() . '/Resources/translations/' . $bundle->getName(), $catalogue);
+                $skippedBundle = false;
+            } catch (\InvalidArgumentException $e) {}
+
+            if ($skippedBundle) {
                 $skippedBundles[] = $bundle->getName();
             }
         }
@@ -59,7 +75,7 @@ class IndexController extends Controller
             $tokenGroups[$className][$token] = $translator->trans($fullToken, array(), $this->getDomain(), $locale);
         }
 
-        $body = $this->renderView('SliExtJsLocalizationBundle:Index:compile.html.twig', array(
+        $body = $this->renderView($this->getTemplate(), array(
             'tokens_total' => count($tokenGroups, true) - count($tokenGroups),
             'locale' => $locale,
             'token_groups' => $tokenGroups,
