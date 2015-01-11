@@ -1,6 +1,6 @@
 <?php
 
-namespace Sli\ExtJsLocalizationBundle\Tests\Extractor;
+namespace Sli\ExtJsLocalizationBundle\Tests\Unit\Extractor;
 
 use Sli\ExtJsLocalizationBundle\Extractor\ExtjsClassesExtractor;
 use Sli\ExtJsLocalizationBundle\FileProvider\FileProviderInterface;

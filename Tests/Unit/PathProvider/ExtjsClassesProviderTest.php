@@ -1,6 +1,6 @@
 <?php
 
-namespace Sli\ExtJsLocalizationBundle\Tests\PathProvider;
+namespace Sli\ExtJsLocalizationBundle\Tests\Unit\PathProvider;
 
 use Sli\ExtJsLocalizationBundle\FileProvider\ExtjsClassesProvider;
 
