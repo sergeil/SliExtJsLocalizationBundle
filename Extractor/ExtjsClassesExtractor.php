@@ -64,7 +64,7 @@ class ExtjsClassesExtractor implements ExtractorInterface
         $tokensEndPosition = null;
 
         $lines = explode("\n", $sourceCode);
-        foreach ($lines as $i=>$line) {
+        foreach ($lines as $i => $line) {
             if (ExtjsClassesProvider::isValidExtjsClass($line)) {
                 $className = ExtjsClassesProvider::isValidExtjsClass($line);
                 continue;
@@ -84,7 +84,7 @@ class ExtjsClassesExtractor implements ExtractorInterface
             return array();
         }
 
-        $tokenLines = array_slice($lines, $tokensStartPosition, $tokensEndPosition-$tokensStartPosition);
+        $tokenLines = array_slice($lines, $tokensStartPosition, $tokensEndPosition - $tokensStartPosition);
 
         $tokens = array();
         foreach ($tokenLines as $line) {
@@ -108,9 +108,17 @@ class ExtjsClassesExtractor implements ExtractorInterface
             }
 
             if (strlen($token) < 4) {
-                throw new \RuntimeException();
+                $msg = implode('', array(
+                    'The token "%s" must be at least 4 characters long. ',
+                    'File path: "%s"'
+                ));
+                throw new \RuntimeException(sprintf($msg, $token, $filename));
             } else if (substr($token, -4, 4) !== 'Text') {
-                throw new \RuntimeException();
+                $msg = implode('', array(
+                    'The token "%s" must have "Text" suffix at the end. ',
+                    'File path: "%s"'
+                ));
+                throw new \RuntimeException(sprintf($msg, $token, $filename));
             }
             $token = substr($token, 0, -4); // removing "Text" suffix
             $token = $className.'.'.$token;
