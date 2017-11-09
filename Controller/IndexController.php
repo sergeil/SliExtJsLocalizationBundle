@@ -12,14 +12,28 @@ use Symfony\Component\HttpFoundation\Response;
  */ 
 class IndexController extends Controller
 {
+    /**
+     * @return string
+     */
     protected function getDomain()
     {
         return 'extjs';
     }
 
+    /**
+     * @return string
+     */
     protected function getTemplate()
     {
         return 'SliExtJsLocalizationBundle:Index:compile.html.twig';
+    }
+
+    /**
+     * @return string
+     */
+    protected function getTranslationsDir()
+    {
+        return $this->get('kernel')->getRootdir() . '/Resources/translations';
     }
 
     /**
@@ -53,7 +67,7 @@ class IndexController extends Controller
             }
 
             try {
-                $loader->loadMessages($kernel->getRootdir() . '/Resources/translations/' . $bundle->getName(), $catalogue);
+                $loader->loadMessages($this->getTranslationsDir() . '/' . $bundle->getName(), $catalogue);
                 $skippedBundle = false;
             } catch (\InvalidArgumentException $e) {}
 
