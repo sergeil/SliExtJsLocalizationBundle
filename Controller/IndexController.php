@@ -66,15 +66,15 @@ class IndexController extends Controller
                 $skippedBundle = true;
             }
 
-            try {
-                $loader->loadMessages($this->getTranslationsDir() . '/' . $bundle->getName(), $catalogue);
-                $skippedBundle = false;
-            } catch (\InvalidArgumentException $e) {}
-
             if ($skippedBundle) {
                 $skippedBundles[] = $bundle->getName();
             }
         }
+
+        try {
+            $loader->loadMessages($this->getTranslationsDir(), $catalogue);
+        } catch (\InvalidArgumentException $e) {}
+
 
         $tokenGroups = array();
         foreach ($catalogue->all($this->getDomain()) as $fullToken=>$translation) {
