@@ -14,7 +14,7 @@ class ExtjsClassesExtractorTest extends \PHPUnit_Framework_TestCase
 {
     public function testExtract()
     {
-        $provider = $this->getMock('Sli\ExtJsLocalizationBundle\FileProvider\FileProviderInterface');
+        $provider = $this->createMock('Sli\ExtJsLocalizationBundle\FileProvider\FileProviderInterface');
         $provider->expects($this->any())
                  ->method('getFiles')
                  ->will($this->returnValue(array(__DIR__.'/resources/class1.js')));
