@@ -2,6 +2,7 @@
 
 namespace Sli\ExtJsLocalizationBundle\Controller;
 
+use Symfony\Component\Translation\Catalogue\MergeOperation;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Translation\MessageCatalogue;
 use Symfony\Component\HttpFoundation\Request;
@@ -47,10 +48,12 @@ class IndexController extends Controller
             $locale = $request->getLocale();
         }
 
-        /* @var \Symfony\Component\Translation\TranslatorInterface $translator */
+        /* @var \Symfony\Component\Translation\TranslatorBagInterface $translator */
         $translator = $this->get('translator');
+
         /* @var \Symfony\Bundle\FrameworkBundle\Translation\TranslationLoader $loader */
         $loader = $this->get('translation.loader');
+
         /* @var \Symfony\Component\HttpKernel\Kernel $kernel */
         $kernel = $this->get('kernel');
 
@@ -75,9 +78,11 @@ class IndexController extends Controller
             $loader->loadMessages($this->getTranslationsDir(), $catalogue);
         } catch (\InvalidArgumentException $e) {}
 
+        $mergeOperation = new MergeOperation($translator->getCatalogue($locale), $catalogue);
+        $catalogue = $mergeOperation->getResult();
 
         $tokenGroups = array();
-        foreach ($catalogue->all($this->getDomain()) as $fullToken=>$translation) {
+        foreach ($catalogue->all($this->getDomain()) as $fullToken => $translation) {
             $className = explode('.', $fullToken);
             $token = array_pop($className);
             $className = implode('.', $className);
@@ -85,7 +90,8 @@ class IndexController extends Controller
             if (!isset($tokenGroups[$className])) {
                 $tokenGroups[$className] = array();
             }
-            
+
+            /* @var \Symfony\Component\Translation\TranslatorInterface $translator */
             $tokenGroups[$className][$token] = $translator->trans($fullToken, array(), $this->getDomain(), $locale);
         }
 
