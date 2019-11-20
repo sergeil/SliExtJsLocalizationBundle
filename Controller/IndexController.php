@@ -43,7 +43,8 @@ class IndexController extends Controller
      */
     protected function loadMessages($directory, MessageCatalogue $catalogue)
     {
-        if ($this->has('translation.reader')) {
+        $isSf4 = $this->getContainer()->has('translation.reader');
+        if ($isSf4) {
             /* @var \Symfony\Component\Translation\Reader\TranslationReaderInterface $reader */
             $reader = $this->get('translation.reader');
             $reader->read($directory, $catalogue);

@@ -69,7 +69,8 @@ TEXT
 
         $bundleTransPath = $bundle->getPath().'/Resources/translations';
 
-        if ($this->getContainer()->has('translation.reader')) {
+        $isSf4 = $this->getContainer()->has('translation.reader');
+        if ($isSf4) {
             /* @var \Symfony\Component\Translation\Reader\TranslationReaderInterface $reader */
             $reader = $this->getContainer()->get('translation.reader');
             $reader->read($bundleTransPath, $catalogue);
