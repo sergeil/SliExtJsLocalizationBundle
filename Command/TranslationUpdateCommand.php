@@ -44,8 +44,6 @@ TEXT
         $kernel = $this->getContainer()->get('kernel');
         /* @var \Symfony\Component\HttpKernel\Bundle\Bundle $bundle */
         $bundle = $kernel->getBundle($input->getArgument('bundle'));
-        /* @var \Symfony\Bundle\FrameworkBundle\Translation\TranslationLoader $loader */
-        $loader = $this->getContainer()->get('translation.loader');
         /* @var \Symfony\Component\Translation\Writer\TranslationWriter $writer */
         $writer = $this->getContainer()->get('translation.writer');
 
@@ -71,7 +69,17 @@ TEXT
 
         $bundleTransPath = $bundle->getPath().'/Resources/translations';
 
-        $loader->loadMessages($bundleTransPath, $catalogue);
+        $isSf4 = $this->getContainer()->has('translation.reader');
+        if ($isSf4) {
+            /* @var \Symfony\Component\Translation\Reader\TranslationReaderInterface $reader */
+            $reader = $this->getContainer()->get('translation.reader');
+            $reader->read($bundleTransPath, $catalogue);
+        } else {
+            /* @var \Symfony\Bundle\FrameworkBundle\Translation\TranslationLoader $loader */
+            $loader = $this->getContainer()->get('translation.loader');
+            $loader->loadMessages($bundleTransPath, $catalogue);
+        }
+
         $writer->writeTranslations($catalogue, $outputFormat, array('path' => $bundleTransPath));
 
         $output->writeln(sprintf('%s tokens were successfully parsed.', count($catalogue->all())));
