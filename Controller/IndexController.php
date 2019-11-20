@@ -38,6 +38,23 @@ class IndexController extends Controller
     }
 
     /**
+     * @param $directory
+     * @param MessageCatalogue $catalogue
+     */
+    protected function loadMessages($directory, MessageCatalogue $catalogue)
+    {
+        if ($this->has('translation.reader')) {
+            /* @var \Symfony\Component\Translation\Reader\TranslationReaderInterface $reader */
+            $reader = $this->get('translation.reader');
+            $reader->read($directory, $catalogue);
+        } else {
+            /* @var \Symfony\Bundle\FrameworkBundle\Translation\TranslationLoader $loader */
+            $loader = $this->get('translation.loader');
+            $loader->loadMessages($directory, $catalogue);
+        }
+    }
+
+    /**
      * @param Request $request
      * @param string $locale
      * @return Response
@@ -51,9 +68,6 @@ class IndexController extends Controller
         /* @var \Symfony\Component\Translation\TranslatorBagInterface $translator */
         $translator = $this->get('translator');
 
-        /* @var \Symfony\Bundle\FrameworkBundle\Translation\TranslationLoader $loader */
-        $loader = $this->get('translation.loader');
-
         /* @var \Symfony\Component\HttpKernel\Kernel $kernel */
         $kernel = $this->get('kernel');
 
@@ -63,7 +77,7 @@ class IndexController extends Controller
         /* @var \Symfony\Component\HttpKernel\Bundle\Bundle $bundle */
         foreach ($kernel->getBundles() as $bundle) {
             try {
-                $loader->loadMessages($bundle->getPath() . '/Resources/translations', $catalogue);
+                $this->loadMessages($bundle->getPath() . '/Resources/translations', $catalogue);
                 $skippedBundle = false;
             } catch (\InvalidArgumentException $e) {
                 $skippedBundle = true;
@@ -75,7 +89,7 @@ class IndexController extends Controller
         }
 
         try {
-            $loader->loadMessages($this->getTranslationsDir(), $catalogue);
+            $this->loadMessages($this->getTranslationsDir(), $catalogue);
         } catch (\InvalidArgumentException $e) {}
 
         $mergeOperation = new MergeOperation($translator->getCatalogue($locale), $catalogue);
