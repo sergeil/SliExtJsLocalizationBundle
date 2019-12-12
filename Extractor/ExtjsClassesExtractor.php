@@ -88,7 +88,7 @@ class ExtjsClassesExtractor implements ExtractorInterface
 
         $tokens = array();
         foreach ($tokenLines as $line) {
-            $exp = explode(':', $line);
+            $exp = explode(':', $line, 2);  // split by  first ":" only with limit=2
 
             $token = trim($exp[0]);
             $value = trim($exp[1]); // getting rid of white spaces

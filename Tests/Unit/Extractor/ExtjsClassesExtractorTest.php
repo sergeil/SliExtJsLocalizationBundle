@@ -27,9 +27,10 @@ class ExtjsClassesExtractorTest extends \PHPUnit_Framework_TestCase
 
         $tokens = $catalogue->all('extjs');
         $this->assertTrue(is_array($tokens));
-        $this->assertEquals(2, count($tokens));
+        $this->assertEquals(3, count($tokens));
         $this->assetToken('Company.foo.bar.MyClass.firstname', '**Firstname', $tokens);
         $this->assetToken('Company.foo.bar.MyClass.lastname', '**Lastname', $tokens);
+        $this->assetToken('Company.foo.bar.MyClass.options', '**Options:', $tokens);
     }
 
     public function test__construct()
